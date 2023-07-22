@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TODO List</title>
+    <!-- Link to Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Link to MUI CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/muicss/0.9.41/css/mui.min.css">
+    <style>
+        /* ... (Previous styles remain unchanged) ... */
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="text-center">TODO List</h1>
+        <div class="row">
+            <div class="col-md-6">
+                <h2 class="text-center">Pending Tasks</h2>
+                <input type="text" class="search-input" id="searchPending" placeholder="Search Pending Tasks...">
+                <div id="pendingTasks">
+                    <!-- Pending tasks will be dynamically added here -->
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h2 class="text-center">Completed Tasks</h2>
+                <input type="text" class="search-input" id="searchCompleted" placeholder="Search Completed Tasks...">
+                <div id="completedTasks">
+                    <!-- Completed tasks will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h3>Add New Task</h3>
+                <input type="text" id="newTask" class="form-control" placeholder="Enter task description">
+                <button class="btn mt-2" onclick="addTask()">Add Task</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Link to Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Task list data
+        let tasks = [];
+
+        // Function to add a new task
+        function addTask() {
+            const taskDescription = document.getElementById('newTask').value;
+            if (taskDescription.trim() === '') return;
+
+            tasks.push({
+                description: taskDescription,
+                completed: false
+            });
+
+            // Update the task lists
+            updateTaskLists();
+            document.getElementById('newTask').value = '';
+        }
+
+        // Function to update task lists
+        function updateTaskLists() {
+            const pendingTasksContainer = document.getElementById('pendingTasks');
+            const completedTasksContainer = document.getElementById('completedTasks');
+
+            pendingTasksContainer.innerHTML = '';
+            completedTasksContainer.innerHTML = '';
+
+            const searchPendingValue = document.getElementById('searchPending').value.toLowerCase();
+            const searchCompletedValue = document.getElementById('searchCompleted').value.toLowerCase();
+
+            tasks.forEach((task, index) => {
+                if (task.description.toLowerCase().includes(searchPendingValue) && !task.completed) {
+                    const taskItem = createTaskItem(task, index, true);
+                    pendingTasksContainer.appendChild(taskItem);
+                } else if (task.description.toLowerCase().includes(searchCompletedValue) && task.completed) {
+                    const taskItem = createTaskItem(task, index, false);
+                    taskItem.classList.add('completed');
+                    completedTasksContainer.appendChild(taskItem);
+                }
+            });
+        }
+
+        // Function to create a task item
+        function createTaskItem(task, index, isPending) {
+            const taskItem = document.createElement('div');
+            taskItem.className = 'task-item';
+
+            const taskDescription = document.createElement('p');
+            taskDescription.innerText = task.description;
+
+            const deleteButton = document.createElement('button');
+            deleteButton.innerText = 'Delete';
+            deleteButton.onclick = () => {
+                deleteTask(index);
+            };
+
+            taskItem.appendChild(taskDescription);
+            taskItem.appendChild(deleteButton);
+
+            if (isPending) {
+                const completeButton = document.createElement('button');
+                completeButton.innerText = 'Complete';
+                completeButton.onclick = () => {
+                    completeTask(index);
+                };
+                taskItem.appendChild(completeButton);
+            } else {
+                taskItem.classList.add('completed');
+            }
+
+            return taskItem;
+        }
+
+        // Function to mark a task as completed
+        function completeTask(index) {
+            tasks[index].completed = true;
+            updateTaskLists();
+        }
+
+        // Function to delete a task
+        function deleteTask(index) {
+            tasks.splice(index, 1);
+            updateTaskLists();
+        }
+
+        // Update task lists when searching
+        document.getElementById('searchPending').addEventListener('input', updateTaskLists);
+        document.getElementById('searchCompleted').addEventListener('input', updateTaskLists);
+
+        // Initial update of task lists
+        updateTaskLists();
+    </script>
+</body>
+</html>
