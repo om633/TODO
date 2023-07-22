@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TODO List</title>
-    <!-- Link to Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Link to MUI CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/muicss/0.9.41/css/mui.min.css">
     <style>
         /* ... (Previous styles remain unchanged) ... */
@@ -19,16 +17,12 @@
             <div class="col-md-6">
                 <h2 class="text-center">Pending Tasks</h2>
                 <input type="text" class="search-input" id="searchPending" placeholder="Search Pending Tasks...">
-                <div id="pendingTasks">
-                    <!-- Pending tasks will be dynamically added here -->
-                </div>
+                <div id="pendingTasks"></div>
             </div>
             <div class="col-md-6">
                 <h2 class="text-center">Completed Tasks</h2>
                 <input type="text" class="search-input" id="searchCompleted" placeholder="Search Completed Tasks...">
-                <div id="completedTasks">
-                    <!-- Completed tasks will be dynamically added here -->
-                </div>
+                <div id="completedTasks"></div>
             </div>
         </div>
         <div class="row mt-4">
@@ -40,30 +34,27 @@
         </div>
     </div>
     
-    <!-- Link to Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        // Task list data
         let tasks = [];
 
-        // Function to add a new task
         function addTask() {
             const taskDescription = document.getElementById('newTask').value;
-            if (taskDescription.trim() === '') return;
+            if (taskDescription.trim() === '') {
+                return;
+            }
 
             tasks.push({
                 description: taskDescription,
                 completed: false
             });
 
-            // Update the task lists
-            updateTaskLists();
             document.getElementById('newTask').value = '';
+            updateTaskLists();
         }
 
-        // Function to update task lists
         function updateTaskLists() {
             const pendingTasksContainer = document.getElementById('pendingTasks');
             const completedTasksContainer = document.getElementById('completedTasks');
@@ -75,10 +66,10 @@
             const searchCompletedValue = document.getElementById('searchCompleted').value.toLowerCase();
 
             tasks.forEach((task, index) => {
-                if (task.description.toLowerCase().includes(searchPendingValue) && !task.completed) {
+                if (!task.completed && task.description.toLowerCase().includes(searchPendingValue)) {
                     const taskItem = createTaskItem(task, index, true);
                     pendingTasksContainer.appendChild(taskItem);
-                } else if (task.description.toLowerCase().includes(searchCompletedValue) && task.completed) {
+                } else if (task.completed && task.description.toLowerCase().includes(searchCompletedValue)) {
                     const taskItem = createTaskItem(task, index, false);
                     taskItem.classList.add('completed');
                     completedTasksContainer.appendChild(taskItem);
@@ -86,7 +77,6 @@
             });
         }
 
-        // Function to create a task item
         function createTaskItem(task, index, isPending) {
             const taskItem = document.createElement('div');
             taskItem.className = 'task-item';
@@ -117,23 +107,19 @@
             return taskItem;
         }
 
-        // Function to mark a task as completed
         function completeTask(index) {
             tasks[index].completed = true;
             updateTaskLists();
         }
 
-        // Function to delete a task
         function deleteTask(index) {
             tasks.splice(index, 1);
             updateTaskLists();
         }
 
-        // Update task lists when searching
         document.getElementById('searchPending').addEventListener('input', updateTaskLists);
         document.getElementById('searchCompleted').addEventListener('input', updateTaskLists);
 
-        // Initial update of task lists
         updateTaskLists();
     </script>
 </body>
